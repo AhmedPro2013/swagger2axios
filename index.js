@@ -14,9 +14,17 @@ function run() {
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
         }
+
+        /*axios_1["default"].get(swaggerApi.url).then(function (res) {
+            handleSwagger(res.data, dir, swaggerApi.name, swaggerApi.prepend);
+        })["catch"]();*/
+
         axios_1["default"].get(swaggerApi.url).then(function (res) {
             handleSwagger(res.data, dir, swaggerApi.name, swaggerApi.prepend);
-        })["catch"]();
+        }).catch(function (error) {
+           // your action on error success
+            console.log(error);
+        });
     };
     for (var _i = 0, swaggerApis_1 = swaggerApis; _i < swaggerApis_1.length; _i++) {
         var swaggerApi = swaggerApis_1[_i];
@@ -39,7 +47,13 @@ function handleSwagger(data, dir, name, prepend) {
         ms = ms.filter(function (el) {
             return el !== 'parameters';
         });
+
+        console.log("ms.length: "+ms.length);
         for (var _i = 0, ms_1 = ms; _i < ms_1.length; _i++) {
+
+            console.log("ms_1.length: "+ms_1.length)
+            console.log("_i: "+_i)
+
             var m = ms_1[_i];
             var a = {
                 url: u,
@@ -73,10 +87,20 @@ function handleSwagger(data, dir, name, prepend) {
                     a.needs[pathp.name] = pathp["in"];
                 }
             }
+
             for (var need in a.needs) {
+            console.log("full a array: ", a);
+                try{
                 a[a.needs[need]].push(need);
+
+                    console.log("need success: "+need)
+                    console.log("a.needs[need] success: "+a.needs[need])
+                }catch(error){
+                    console.log("error log: ", error)
+                    console.log("need errored: "+need)
+                    console.log("a.needs[need] errored: "+a.needs[need])
+                }
             }
-            // console.log(a);
             apis.push(a);
         }
     }
